@@ -1,17 +1,17 @@
 package ru.netology.model;
 
-public class Post {
+public class PostDto {
     private long id;
     private String content;
-    private boolean removed;
 
-    public Post() {
-    }
 
-    public Post(long id, String content) {
+    public PostDto(long id, String content) {
         this.id = id;
         this.content = content;
-        this.removed = false;
+    }
+
+    public PostDto() {
+
     }
 
     public long getId() {
@@ -30,19 +30,12 @@ public class Post {
         this.content = content;
     }
 
-    public void setRemoved(boolean removed) {
-        this.removed = removed;
-    }
-
-    public boolean isRemoved() {
-        return removed;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
+        PostDto post = (PostDto) o;
         return id == post.id;
     }
 }

@@ -4,12 +4,12 @@ import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Repository
 public class PostRepositoryStubImpl implements PostRepository {
@@ -18,12 +18,14 @@ public class PostRepositoryStubImpl implements PostRepository {
 
     @Override
     public List<Post> all() {
-        return new ArrayList<>(posts.values());
+        return posts.values()
+                .stream()
+                .filter(post -> !post.isRemoved()).collect(Collectors.toList());
     }
 
     @Override
     public Optional<Post> getById(long id) {
-        if (posts.containsKey(id)) {
+        if (posts.containsKey(id) && !posts.get(id).isRemoved()) {
             return Optional.ofNullable(posts.get(id));
         }
         System.out.println("Такого поста не существует");
@@ -46,8 +48,10 @@ public class PostRepositoryStubImpl implements PostRepository {
 
     @Override
     public void removeById(long id) {
-        if (posts.containsKey(id)) {
-            posts.remove(id);
+        if (getById(id).isPresent()) {
+            Post post = getById(id).get();
+            post.setRemoved(true);
+            posts.replace(id, post);
         } else {
             throw new NotFoundException();
         }
